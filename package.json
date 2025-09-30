@@ -4,12 +4,13 @@
   "description": "Resettlement App with Next.js frontend and Express API with PostgreSQL",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "node server.js",
     "start:next": "next start",
     "server": "node src/index.js",
     "dev:server": "nodemon src/index.js",
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "ts-node prisma/seed.ts",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^5.4.2",
