@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resettlement Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .status {
+            color: #28a745;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .api-link {
+            display: inline-block;
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px;
+        }
+        .api-link:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏠 Resettlement Application</h1>
+        <div class="status">✅ Server is running successfully!</div>
+        <p>Welcome to the Resettlement Application. The server is operational and ready to handle requests.</p>
+        
+        <h3>API Endpoints:</h3>
+        <a href="/api/health" class="api-link">Health Check</a>
+        <a href="/api/auth" class="api-link">Authentication API</a>
+        
+        <hr style="margin: 30px 0;">
+        <p><small>Environment: <span id="env">Production</span> | Port: <span id="port">3000</span></small></p>
+        
+        <script>
+            // Test API connectivity
+            fetch('/api/health')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('env').textContent = data.environment || 'Unknown';
+                    console.log('API Health Check:', data);
+                })
+                .catch(error => {
+                    console.error('API Health Check failed:', error);
+                    document.querySelector('.status').innerHTML = '⚠️ API connection issue detected';
+                    document.querySelector('.status').style.color = '#dc3545';
+                });
+        </script>
+    </div>
+</body>
+</html>
