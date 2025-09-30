@@ -1,9 +1,24 @@
 import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
-import prisma from "@/lib/prisma";
+
+// Import prisma with proper error handling for build time
+let prisma: any;
+try {
+  prisma = require("@/lib/prisma");
+} catch (error) {
+  console.warn("Prisma not available during build:", error);
+}
 
 export async function POST(req: Request) {
   try {
+    // Check if prisma is available (not during build time)
+    if (!prisma) {
+      return NextResponse.json(
+        { message: "Database not available" },
+        { status: 503 }
+      );
+    }
+
     const { name, email, password, role } = await req.json();
     
     // Check if user exists

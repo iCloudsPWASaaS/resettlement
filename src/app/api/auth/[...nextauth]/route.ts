@@ -15,8 +15,14 @@ const handler = NextAuth({
         }
 
         try {
+          // For build time, return null to avoid database connection issues
+          if (process.env.NODE_ENV === 'production' && !process.env.DATABASE_URL) {
+            console.warn("Database not configured for build");
+            return null;
+          }
+
           // Call your backend API for authentication
-          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/auth/login`, {
+          const response = await fetch(`${process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/auth/login`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -69,6 +75,7 @@ const handler = NextAuth({
   session: {
     strategy: "jwt",
   },
+  secret: process.env.NEXTAUTH_SECRET,
 });
 
 export { handler as GET, handler as POST };
