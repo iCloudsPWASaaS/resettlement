@@ -1,5 +1,15 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { compare } from "bcryptjs";
+
+// Import prisma with proper error handling for build time
+let prisma: any;
+try {
+  const { default: prismaClient } = require("@/lib/prisma");
+  prisma = prismaClient;
+} catch (error) {
+  console.warn("Prisma not available during build:", error);
+}
 
 const handler = NextAuth({
   providers: [
@@ -21,29 +31,33 @@ const handler = NextAuth({
             return null;
           }
 
-          // Call your backend API for authentication
-          const response = await fetch(`${process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/auth/login`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              email: credentials.email,
-              password: credentials.password,
-            }),
+          // Check if prisma is available
+          if (!prisma) {
+            console.warn("Database not available");
+            return null;
+          }
+
+          // Find user in database
+          const user = await prisma.user.findUnique({
+            where: { email: credentials.email },
           });
 
-          const data = await response.json();
+          if (!user) {
+            return null;
+          }
 
-          if (!response.ok) {
+          // Verify password
+          const isPasswordValid = await compare(credentials.password, user.password);
+
+          if (!isPasswordValid) {
             return null;
           }
 
           return {
-            id: data.user.id,
-            email: data.user.email,
-            name: data.user.name,
-            role: data.user.role,
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
           };
         } catch (error) {
           console.error('Auth error:', error);
