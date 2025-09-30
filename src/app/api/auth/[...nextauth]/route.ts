@@ -1,15 +1,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
-
-// Import prisma with proper error handling for build time
-let prisma: any;
-try {
-  const { default: prismaClient } = require("@/lib/prisma");
-  prisma = prismaClient;
-} catch (error) {
-  console.warn("Prisma not available during build:", error);
-}
+import prisma from "@/lib/prisma";
 
 const handler = NextAuth({
   providers: [
@@ -21,38 +13,35 @@ const handler = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
+          console.log("Missing credentials");
           return null;
         }
 
         try {
-          // For build time, return null to avoid database connection issues
-          if (process.env.NODE_ENV === 'production' && !process.env.DATABASE_URL) {
-            console.warn("Database not configured for build");
-            return null;
-          }
-
-          // Check if prisma is available
-          if (!prisma) {
-            console.warn("Database not available");
-            return null;
-          }
-
+          console.log("Attempting to authenticate user:", credentials.email);
+          
           // Find user in database
           const user = await prisma.user.findUnique({
             where: { email: credentials.email },
           });
 
           if (!user) {
+            console.log("User not found:", credentials.email);
             return null;
           }
 
+          console.log("User found, verifying password");
+          
           // Verify password
           const isPasswordValid = await compare(credentials.password, user.password);
 
           if (!isPasswordValid) {
+            console.log("Invalid password for user:", credentials.email);
             return null;
           }
 
+          console.log("Authentication successful for user:", credentials.email);
+          
           return {
             id: user.id,
             email: user.email,
@@ -60,7 +49,7 @@ const handler = NextAuth({
             role: user.role,
           };
         } catch (error) {
-          console.error('Auth error:', error);
+          console.error('Database connection error during auth:', error);
           return null;
         }
       }
