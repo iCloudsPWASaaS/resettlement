@@ -4,21 +4,24 @@ import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
 import { useAuth } from "../context/AuthContext";
 import Image from "next/image";
-import { useState } from "react";import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faChartLine, 
-  faUsers, 
-  faComments, 
-  faHandshake, 
-  faBuilding, 
-  faStar, 
-  faBriefcase, 
-  faSearch, 
-  faCog, 
-  faBell, 
-  faSignOutAlt,
-  faUser
-} from '@fortawesome/free-solid-svg-icons';export default function DashboardLayout({
+import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faChartLine,
+  faUsers,
+  faUser,
+  faComments,
+  faHandshake,
+  faBuilding,
+  faStar,
+  faBriefcase,
+  faSearch,
+  faCog,
+  faBell,
+  faSignOutAlt
+} from "@fortawesome/free-solid-svg-icons";
+
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -93,7 +96,7 @@ import {
             </li>
             <li>
               <a
-                href="#"
+                href="/service-providers"
                 className="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg"
               >
                 <FontAwesomeIcon icon={faBuilding} className="w-4 h-4" />

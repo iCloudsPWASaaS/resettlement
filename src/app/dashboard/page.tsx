@@ -11,7 +11,7 @@ export default function Dashboard() {
     <div className="space-y-6">
       {/* Explore Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 hidden">Explore</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Explore</h1>
       </div>
       
       {/* Content Grid */}

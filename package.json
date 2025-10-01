@@ -7,8 +7,6 @@
     "build": "prisma generate && next build",
     "start": "node server.js",
     "start:next": "next start",
-    "server": "node src/index.js",
-    "dev:server": "nodemon src/index.js",
     "seed": "ts-node prisma/seed.ts",
     "postinstall": "prisma generate"
   },

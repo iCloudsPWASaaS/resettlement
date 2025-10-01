@@ -31,10 +31,6 @@ export default function ProfilePage() {
     bio: "",
     role: ""
   });
-  const [profilePicture, setProfilePicture] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // Initialize profile data from session or user context
@@ -52,79 +48,19 @@ export default function ProfilePage() {
     }
   }, [session, user]);
 
-  const validateForm = () => {
-    const newErrors: {[key: string]: string} = {};
-    
-    if (!profileData.name.trim()) {
-      newErrors.name = "Name is required";
-    }
-    
-    if (!profileData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(profileData.email)) {
-      newErrors.email = "Email is invalid";
-    }
-    
-    if (profileData.phone && !/^\+?[\d\s\-\(\)]+$/.test(profileData.phone)) {
-      newErrors.phone = "Phone number is invalid";
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setProfileData(prev => ({
       ...prev,
       [name]: value
     }));
-    
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ""
-      }));
-    }
   };
 
-  const handleSave = async () => {
-    if (!validateForm()) {
-      return;
-    }
-    
-    setIsLoading(true);
-    try {
-      // TODO: Implement API call to update user profile
-      console.log("Saving profile data:", profileData);
-      if (selectedFile) {
-        console.log("Uploading profile picture:", selectedFile);
-        // TODO: Implement file upload to server
-      }
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setIsEditing(false);
-      // Here you would typically make an API call to update the user's profile
-    } catch (error) {
-      console.error("Error saving profile:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setProfilePicture(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleSave = () => {
+    // TODO: Implement API call to update user profile
+    console.log("Saving profile data:", profileData);
+    setIsEditing(false);
+    // Here you would typically make an API call to update the user's profile
   };
 
   const handleCancel = () => {
@@ -161,16 +97,14 @@ export default function ProfilePage() {
               <div className="flex space-x-2">
                 <button
                   onClick={handleSave}
-                  disabled={isLoading}
-                  className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                 >
                   <FontAwesomeIcon icon={faSave} className="w-4 h-4" />
-                  <span>{isLoading ? "Saving..." : "Save"}</span>
+                  <span>Save</span>
                 </button>
                 <button
                   onClick={handleCancel}
-                  disabled={isLoading}
-                  className="flex items-center space-x-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center space-x-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
                 >
                   <FontAwesomeIcon icon={faTimes} className="w-4 h-4" />
                   <span>Cancel</span>
@@ -184,35 +118,15 @@ export default function ProfilePage() {
         <div className="px-6 py-6">
           <div className="flex items-center space-x-6">
             <div className="relative">
-              {profilePicture ? (
-                <img
-                  src={profilePicture}
-                  alt="Profile"
-                  className="w-24 h-24 rounded-full object-cover"
-                />
-              ) : (
-                <div className="w-24 h-24 bg-pink-600 rounded-full flex items-center justify-center">
-                  <span className="text-white text-2xl font-bold">
-                    {profileData.name.charAt(0).toUpperCase() || "U"}
-                  </span>
-                </div>
-              )}
+              <div className="w-24 h-24 bg-pink-600 rounded-full flex items-center justify-center">
+                <span className="text-white text-2xl font-bold">
+                  {profileData.name.charAt(0).toUpperCase() || "U"}
+                </span>
+              </div>
               {isEditing && (
-                <>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileSelect}
-                    className="hidden"
-                    id="profile-picture-input"
-                  />
-                  <label
-                    htmlFor="profile-picture-input"
-                    className="absolute bottom-0 right-0 w-8 h-8 bg-gray-600 text-white rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors cursor-pointer"
-                  >
-                    <FontAwesomeIcon icon={faCamera} className="w-4 h-4" />
-                  </label>
-                </>
+                <button className="absolute bottom-0 right-0 w-8 h-8 bg-gray-600 text-white rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors">
+                  <FontAwesomeIcon icon={faCamera} className="w-4 h-4" />
+                </button>
               )}
             </div>
             <div>
@@ -244,14 +158,11 @@ export default function ProfilePage() {
                   name="name"
                   value={profileData.name}
                   onChange={handleInputChange}
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 ${
-                    errors.name ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
                 />
               ) : (
                 <p className="text-gray-900 py-2">{profileData.name || "Not provided"}</p>
               )}
-              {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
             </div>
 
             {/* Email */}
@@ -266,14 +177,11 @@ export default function ProfilePage() {
                   name="email"
                   value={profileData.email}
                   onChange={handleInputChange}
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 ${
-                    errors.email ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
                 />
               ) : (
                 <p className="text-gray-900 py-2">{profileData.email || "Not provided"}</p>
               )}
-              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
             </div>
 
             {/* Phone */}
@@ -288,14 +196,11 @@ export default function ProfilePage() {
                   name="phone"
                   value={profileData.phone}
                   onChange={handleInputChange}
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 ${
-                    errors.phone ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
                 />
               ) : (
                 <p className="text-gray-900 py-2">{profileData.phone || "Not provided"}</p>
               )}
-              {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
             </div>
 
             {/* Date of Birth */}

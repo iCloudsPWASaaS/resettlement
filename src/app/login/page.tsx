@@ -89,7 +89,7 @@ export default function Login() {
                 onChange={(e) => setSelectedAccountType(e.target.value)}
                 className="w-4 h-4 text-pink-600 border-gray-300 focus:ring-pink-500"
               />
-              <span className="text-gray-900">MyResettlement Admin</span>
+              <span className="text-gray-900">Resettlement Admin</span>
             </label>
           </div>
 
