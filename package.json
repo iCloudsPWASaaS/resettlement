@@ -13,6 +13,9 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^7.0.1",
+    "@fortawesome/free-solid-svg-icons": "^7.0.1",
+    "@fortawesome/react-fontawesome": "^3.0.2",
     "@prisma/client": "^5.4.2",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",

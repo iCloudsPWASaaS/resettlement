@@ -1,116 +1,116 @@
 "use client";
 
 import { useState } from "react";
-import { signIn, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Login() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [selectedAccountType, setSelectedAccountType] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    try {
-      const result = await signIn("credentials", {
-        redirect: false,
-        email,
-        password,
-      });
-
-      if (result?.error) {
-        setError("Invalid email or password");
-        setLoading(false);
-        return;
-      }
-
-      // Get the session to check user role
-      const session = await getSession();
-      
-      // Redirect based on role
-      if (session?.user?.role === "ADMIN") {
-        router.push("/dashboard/admin");
-      } else {
-        router.push("/dashboard");
-      }
-    } catch (error) {
-      setError("An error occurred during login");
-      setLoading(false);
+  const handleNext = () => {
+    if (selectedAccountType) {
+      // Navigate to the actual login form with the selected account type
+      router.push(`/login/form?type=${selectedAccountType}`);
     }
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
-      <div className="w-full max-w-md space-y-8 p-10 bg-white rounded-xl shadow-lg">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
-          </h2>
+    <div className="flex min-h-screen flex-col items-center justify-center py-8 px-4 bg-gray-50">
+      <div className="w-full max-w-sm space-y-8">
+        {/* Logo */}
+        <div className="flex justify-center">
+          <Image
+            src="/logo.PNG"
+            alt="Resettlement Logo"
+            width={200}
+            height={100}
+            className="h-auto"
+            unoptimized
+          />
         </div>
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-            <span className="block sm:inline">{error}</span>
-          </div>
-        )}
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="email-address" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="email-address"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+
+        {/* Account Type Selection */}
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+              Select account type
+            </h2>
+            <p className="text-sm text-gray-600">
+              Choose the type of account you want to create.
+            </p>
           </div>
 
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              {loading ? "Signing in..." : "Sign in"}
-            </button>
+          {/* Radio Button Options */}
+          <div className="space-y-4">
+            <label className="flex items-center space-x-3 cursor-pointer">
+              <input
+                type="radio"
+                name="accountType"
+                value="user"
+                checked={selectedAccountType === "user"}
+                onChange={(e) => setSelectedAccountType(e.target.value)}
+                className="w-4 h-4 text-pink-600 border-gray-300 focus:ring-pink-500"
+              />
+              <span className="text-gray-900">User</span>
+            </label>
+
+            <label className="flex items-center space-x-3 cursor-pointer">
+              <input
+                type="radio"
+                name="accountType"
+                value="hmpps"
+                checked={selectedAccountType === "hmpps"}
+                onChange={(e) => setSelectedAccountType(e.target.value)}
+                className="w-4 h-4 text-pink-600 border-gray-300 focus:ring-pink-500"
+              />
+              <span className="text-gray-900">HMPPS Practitioner</span>
+            </label>
+
+            <label className="flex items-center space-x-3 cursor-pointer">
+              <input
+                type="radio"
+                name="accountType"
+                value="service-provider"
+                checked={selectedAccountType === "service-provider"}
+                onChange={(e) => setSelectedAccountType(e.target.value)}
+                className="w-4 h-4 text-pink-600 border-gray-300 focus:ring-pink-500"
+              />
+              <span className="text-gray-900">Service Provider</span>
+            </label>
+
+            <label className="flex items-center space-x-3 cursor-pointer">
+              <input
+                type="radio"
+                name="accountType"
+                value="resettlement-admin"
+                checked={selectedAccountType === "resettlement-admin"}
+                onChange={(e) => setSelectedAccountType(e.target.value)}
+                className="w-4 h-4 text-pink-600 border-gray-300 focus:ring-pink-500"
+              />
+              <span className="text-gray-900">MyResettlement Admin</span>
+            </label>
           </div>
-        </form>
-        <div className="text-center mt-4">
-          <p className="text-sm text-gray-600">
-            Don't have an account?{" "}
-            <Link href="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
-              Register
-            </Link>
-          </p>
+
+          {/* Next Button */}
+          <button
+            onClick={handleNext}
+            disabled={!selectedAccountType}
+            className="w-full py-3 px-4 bg-pink-600 hover:bg-pink-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors duration-200"
+          >
+            Next
+          </button>
+
+          {/* Login Link */}
+          <div className="text-center">
+            <p className="text-sm text-gray-600">
+              Already have an account?{" "}
+              <Link href="/login/form" className="text-pink-600 hover:text-pink-700 font-medium">
+                Login
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>

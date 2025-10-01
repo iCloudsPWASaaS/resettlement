@@ -10,6 +10,11 @@ interface AuthContextType {
     email: string;
     role: string;
     name?: string;
+    phone?: string;
+    address?: string;
+    dateOfBirth?: string;
+    occupation?: string;
+    bio?: string;
   } | null;
   isAuthenticated: boolean;
   loading: boolean;

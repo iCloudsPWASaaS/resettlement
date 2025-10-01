@@ -15,19 +15,6 @@ router.get('/', (req, res) => {
   });
 });
 
-// Admin dashboard route
-router.get('/admin', authorizeRoles('ADMIN'), (req, res) => {
-  res.json({
-    message: 'Welcome to the ADMIN dashboard!',
-    features: [
-      'User management',
-      'System configuration',
-      'Full access to all data',
-      'Audit logs'
-    ]
-  });
-});
-
 // Manager dashboard route
 router.get('/manager', authorizeRoles('ADMIN', 'MANAGER'), (req, res) => {
   res.json({

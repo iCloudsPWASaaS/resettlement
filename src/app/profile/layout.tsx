@@ -1,6 +1,6 @@
 import DashboardLayout from "../components/DashboardLayout";
 
-export default function Layout({
+export default function ProfileLayout({
   children,
 }: {
   children: React.ReactNode;

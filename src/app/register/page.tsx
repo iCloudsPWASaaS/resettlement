@@ -115,7 +115,6 @@ export default function Register() {
                 onChange={handleChange}
               >
                 <option value="USER">User</option>
-                <option value="ADMIN">Admin</option>
               </select>
             </div>
           </div>
