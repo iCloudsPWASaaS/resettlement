@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { signIn, getSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
-export default function LoginForm() {
+function LoginFormContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const accountType = searchParams.get('type');
@@ -136,5 +136,13 @@ export default function LoginForm() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginForm() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Loading...</div>}>
+      <LoginFormContent />
+    </Suspense>
   );
 }
